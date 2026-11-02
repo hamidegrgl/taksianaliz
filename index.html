@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ankara Taksi Talep ve Kazanç Analizi</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="wrap">
+<div id="setup" class="card" hidden>
+<h2>Kurulum gerekli</h2>
+<p><code>config.js</code> dosyasındaki <code>SUPABASE_URL</code> ve <code>SUPABASE_ANON_KEY</code> alanları boş. README.md içindeki adımları izleyip bu iki değeri doldurun.</p>
+</div>
+<main class="landing">
+<div class="hero">
+<h1>Ankara taksi talep ve kazanç analizi</h1>
+<p>Yolculuk ve giderlerini kaydet, saat ve bölgeye göre talebi gör, Ankara’nın anlık trafik yoğunluğunu haritada izle.</p>
+<a class="btn pri" href="harita.html">Trafik haritasını aç</a>
+</div>
+<div id="auth" class="card" hidden>
+<h2>Giriş</h2>
+<p class="empty">Kayıtlarını görmek için giriş yap.</p>
+<form id="af" class="grid">
+<label id="nm" hidden>Ad soyad<input name="name" autocomplete="name"></label>
+<label>E-posta<input name="email" type="email" required autocomplete="email"></label>
+<label>Şifre (en az 6 karakter)<input name="pw" type="password" minlength="6" required autocomplete="current-password"></label>
+<button class="btn pri" type="submit" id="asub">Giriş yap</button>
+</form>
+<p style="margin:12px 0 0"><button class="btn link" id="atog" type="button">Hesabın yok mu? Kayıt ol</button> <button class="btn link" id="forgot" type="button">Şifremi unuttum</button></p>
+<p class="hint">Hesabın bu cihazda hatırlanır; tekrar giriş yapman gerekmez.</p>
+</div>
+<div id="rec" class="card" hidden>
+<h2>Yeni şifre belirle</h2>
+<form id="rf" class="grid"><label>Yeni şifre (en az 6 karakter)<input name="pw" type="password" minlength="6" required autocomplete="new-password"></label>
+<button class="btn pri" type="submit">Şifreyi güncelle</button></form>
+</div>
+</main>
+<div id="toast" role="status" hidden></div>
+</div>
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="js/common.js"></script>
+<script src="js/auth.js"></script>
+</body>
+</html>

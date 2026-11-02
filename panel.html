@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kazanç Paneli · Ankara Taksi Analizi</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="wrap">
+<div id="setup" class="card" hidden>
+<h2>Kurulum gerekli</h2>
+<p><code>config.js</code> dosyasındaki <code>SUPABASE_URL</code> ve <code>SUPABASE_ANON_KEY</code> alanları boş. README.md içindeki adımları izleyip bu iki değeri doldurun.</p>
+</div>
+<div id="app" hidden>
+<div class="top">
+<div><h1>Ankara taksi talep ve kazanç analizi</h1><p id="who"></p></div>
+<div class="row" style="margin:0"><a class="btn" href="harita.html">Trafik haritası</a><button class="btn" id="out">Çıkış yap</button></div>
+</div>
+<nav role="tablist" id="tabs">
+<button data-t="panel" aria-selected="true">Kazanç paneli</button>
+<button data-t="kayit" aria-selected="false">Kayıt ekle</button>
+<button data-t="arac" aria-selected="false">Araçlarım</button>
+<button data-t="yogun" aria-selected="false">Yoğunluk ve tahmin</button>
+<button data-t="trafik" aria-selected="false">Trafik akışı</button>
+<button data-t="proje" aria-selected="false">Proje hakkında</button>
+</nav>
+
+<section id="panel" class="panel on">
+<div class="row seg" id="per"><button data-p="gun" aria-pressed="true">Bugün</button><button data-p="ay" aria-pressed="false">Bu ay</button><button data-p="hepsi" aria-pressed="false">Tüm kayıtlar</button></div>
+<div class="grid kpis" id="kpis"></div>
+<p class="note">Hesaplanan fark = tahsilat − kayıtlı giderler. Girilmeyen masraflar varsa bu tutar gerçek net kâr değildir.</p>
+<div class="card" style="margin-top:14px"><h2>Son yolculuklar</h2><div class="tbl" id="tl"></div></div>
+<div class="card"><h2>Son giderler</h2><div class="tbl" id="el"></div></div>
+</section>
+
+<section id="kayit" class="panel"><div class="grid two">
+<div class="card"><h2>Yolculuk ekle</h2>
+<form id="tf" class="fg">
+<label>Tarih<input type="date" name="d" required></label>
+<label>Saat<input type="time" name="t" required></label>
+<label>Başlangıç bölgesi<select name="z" class="zs"></select></label>
+<label>Araç<select name="v" class="vs"></select></label>
+<label>Ücret (₺)<input type="number" name="f" min="0" step="1" required inputmode="numeric"></label>
+<label>Yolculuk km<input type="number" name="k" min="0" step="0.1" required inputmode="decimal"></label>
+<label>Boş km<input type="number" name="b" min="0" step="0.1" value="0" inputmode="decimal"></label>
+<label>&nbsp;<button class="btn pri" type="submit">Yolculuğu kaydet</button></label>
+</form></div>
+<div class="card"><h2>Gider ekle</h2>
+<form id="ef" class="fg">
+<label>Tarih<input type="date" name="d" required></label>
+<label>Tür<select name="c"><option>Yakıt</option><option>Bakım ve onarım</option><option>Sigorta ve vergi</option><option>Otopark ve yol ücreti</option><option>Diğer</option></select></label>
+<label>Araç<select name="v" class="vs"></select></label>
+<label>Tutar (₺)<input type="number" name="a" min="0" step="1" required inputmode="numeric"></label>
+<label>Not<input name="n" maxlength="120"></label>
+<label>&nbsp;<button class="btn pri" type="submit">Gideri kaydet</button></label>
+</form></div>
+</div>
+<p class="note">Yolcunun adı, telefonu veya kimliği alınmaz. Yalnızca analiz için gereken alanlar tutulur.</p>
+</section>
+
+<section id="arac" class="panel">
+<div class="card"><h2>Araç ekle</h2>
+<form id="vf" class="fg">
+<label>Plaka<input name="p" required maxlength="12" placeholder="06 ABC 123"></label>
+<label>Marka<input name="b" maxlength="40"></label>
+<label>Model<input name="m" maxlength="40"></label>
+<label>Yıl<input name="y" type="number" min="1980" max="2100" inputmode="numeric"></label>
+<label>Yakıt<select name="u"><option>Benzin</option><option>Dizel</option><option>LPG</option><option>Hibrit</option><option>Elektrik</option></select></label>
+<label>&nbsp;<button class="btn pri" type="submit">Aracı ekle</button></label>
+</form></div>
+<div class="card"><h2>Kayıtlı araçlar</h2><div class="tbl" id="vl"></div></div>
+</section>
+
+<section id="yogun" class="panel"><div id="ygn"></div></section>
+
+<section id="trafik" class="panel">
+<div class="card"><h2>Canlı trafik haritası</h2><p>Adres ara ve Ankara’nın anlık trafik yoğunluğunu haritada gör.</p><a class="btn pri" href="harita.html">Haritayı aç</a></div>
+<div class="card"><h2>Bölgelere göre trafik akışı</h2><div id="trl"></div>
+<p class="note">Trafik yoğunluğu, taksi müşterisi yoğunluğuyla aynı şey değildir. Burada yalnızca ek bağlam olarak gösterilir.</p></div>
+<div class="card" id="adm" hidden><h2>Trafik verisi gir (yönetici)</h2>
+<form id="xf" class="fg">
+<label>Bölge<select name="z" class="zs"></select></label>
+<label>Seviye<select name="l"><option value="1">1 · Çok akıcı</option><option value="2">2 · Akıcı</option><option value="3" selected>3 · Orta</option><option value="4">4 · Yoğun</option><option value="5">5 · Çok yoğun</option></select></label>
+<label>Ort. hız (km/sa)<input name="s" type="number" min="0" step="0.1" inputmode="decimal"></label>
+<label>Kaynak<input name="r" value="Elle girildi" maxlength="60"></label>
+<label>&nbsp;<button class="btn pri" type="submit">Veriyi yayınla</button></label>
+</form></div>
+</section>
+
+<section id="proje" class="panel"><div class="card">
+<h2>Araştırma sorusu</h2>
+<p>Geçmiş yolculuk verileri kullanılarak Ankara’da belirli saat ve bölgelerdeki taksi talebi tahmin edilebilir mi? Bu analiz sürücünün günlük kararlarını destekleyebilir mi?</p>
+<p><span class="pill">Yapay zekâ</span> <span class="pill">Bilgisayar ağları</span> <span class="pill">İstemci-sunucu</span> <span class="pill">HTTPS + JWT</span></p>
+<h3 style="margin-top:12px">Mimari</h3>
+<p>Tarayıcı (bu site, GitHub Pages) → HTTPS → Supabase (kimlik doğrulama, REST API, PostgreSQL). Her kullanıcı yalnızca kendi kayıtlarını okuyup yazabilir (satır düzeyinde güvenlik). Tüm sürücülerin toplu talep verisi anonimdir ve en az 3 farklı sürücü içermeyen hücreler gösterilmez.</p>
+<h3>Sınırlılıklar</h3>
+<ul><li>Az sürücünün kayıtları Ankara genelini temsil etmez; sonuçlar pilot örneklemdir.</li><li>Konum olarak kesin GPS yerine yaklaşık bölge kullanılır.</li><li>Plaka kişisel veridir; yalnızca sahibi görür.</li></ul>
+</div>
+<div class="card" id="usr" hidden><h2>Kayıtlı kullanıcılar (yönetici)</h2><div id="usl"></div></div></section>
+</div>
+<div id="toast" role="status" hidden></div>
+</div>
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="js/common.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

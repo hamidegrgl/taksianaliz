@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ankara Trafik Haritası</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="map-page">
+<div id="map"></div>
+<section class="mp-panel" aria-label="Adres arama ve trafik">
+  <div class="mp-nav"><a href="index.html">Ana sayfa</a><a href="panel.html">Kazanç paneli</a></div>
+  <h1>Ankara adres ve trafik haritası</h1>
+  <form id="searchForm" class="mp-row" role="search">
+    <input id="q" type="search" placeholder="Örn: Kızılay Meydanı, Çankaya" aria-label="Adres ara" autocomplete="off">
+    <button class="btn pri" type="submit">Ara</button>
+  </form>
+  <ul id="results"></ul>
+  <p id="status" role="status" aria-live="polite"></p>
+  <div class="mp-tools">
+    <label><input type="checkbox" id="trafficToggle" checked> Trafik yoğunluğu</label>
+    <button type="button" id="refresh" class="btn">Trafiği yenile</button>
+  </div>
+  <div class="mp-legend" aria-hidden="true"><span>Akıcı</span><span class="mp-bar"></span><span>Yoğun</span></div>
+</section>
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+<script src="js/harita.js"></script>
+</body>
+</html>
